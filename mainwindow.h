@@ -1,5 +1,5 @@
-/* mainwindow.h
- * the main window for the application */
+// mainwindow.h
+// the main window for the application */
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
@@ -53,10 +53,10 @@ class MainWindow : public QMainWindow {
     Editor* currentEditor();
 
   public slots:
-    /* when the file runner has output for us */
+    // when the file runner has output for us */
     void receiveOutput(QString text);
 
-    /* when the console has input for us to pass to program */
+    // when the console has input for us to pass to program */
     void receiveInput(QString text);
 
   private slots:

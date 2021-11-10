@@ -1,5 +1,5 @@
-/* syntaxhighlighter.h
- * this file comes with the Qt toolkit examples, original Qt license to follow */
+// syntaxhighlighter.h
+// this file comes with the Qt toolkit examples, original Qt license to follow */
 
 /****************************************************************************
 **
@@ -46,6 +46,7 @@
 
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
+#include <QRegularExpression>
 
 QT_BEGIN_NAMESPACE
 class QTextDocument;
@@ -62,13 +63,13 @@ class Highlighter : public QSyntaxHighlighter {
 
   private:
     struct HighlightingRule {
-        QRegExp pattern;
+        QRegularExpression pattern;
         QTextCharFormat format;
     };
     QVector<HighlightingRule> highlightingRules;
 
-    QRegExp commentStartExpression;
-    QRegExp commentEndExpression;
+    QRegularExpression commentStartExpression;
+    QRegularExpression commentEndExpression;
 
     QTextCharFormat typeFormat;
     QTextCharFormat keywordFormat;

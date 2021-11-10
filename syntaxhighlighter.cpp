@@ -24,7 +24,7 @@ Highlighter::Highlighter(QTextDocument* parent)
                  << "\\bvoid\\b"
                  << "\\bString\\b";
     foreach (const QString& pattern, typePatterns) {
-        rule.pattern = QRegExp(pattern);
+        rule.pattern = QRegularExpression(pattern);
         rule.format = typeFormat;
         highlightingRules.append(rule);
     }
@@ -73,7 +73,7 @@ Highlighter::Highlighter(QTextDocument* parent)
                     << "\\bwhile\\b";
 
     foreach (const QString& pattern, keywordPatterns) {
-        rule.pattern = QRegExp(pattern);
+        rule.pattern = QRegularExpression(pattern);
         rule.format = keywordFormat;
         highlightingRules.append(rule);
     }
@@ -86,39 +86,38 @@ Highlighter::Highlighter(QTextDocument* parent)
                   << "[0-9]\\d{0,3}"
                   << "\\d.\\d";
     foreach (const QString& pattern, valuePatterns) {
-        rule.pattern = QRegExp(pattern);
+        rule.pattern = QRegularExpression(pattern);
         rule.format = valueFormat;
         highlightingRules.append(rule);
     }
 
     /* strings */
     quotationFormat.setForeground(SettingsManager::values());
-    rule.pattern = QRegExp("\".*\"");
+    rule.pattern = QRegularExpression("\".*\"");
     rule.format = quotationFormat;
     highlightingRules.append(rule);
 
     /* single-line comments */
     singleLineCommentFormat.setForeground(SettingsManager::comments());
-    rule.pattern = QRegExp("//[^\n]*");
+    rule.pattern = QRegularExpression("//[^\n]*");
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
     /* multi-line comments 
      * FIXME - this doesn't currently work! */
     multiLineCommentFormat.setForeground(SettingsManager::comments());
-    rule.pattern = QRegExp("\\/\\*(\\r|[^*]|\\n|(\\*+[^\\/]))*\\*\\/");
+    rule.pattern = QRegularExpression("\\/\\*(\\r|[^*]|\\n|(\\*+[^\\/]))*\\*\\/");
     rule.format = multiLineCommentFormat;
     highlightingRules.append(rule);
 }
 
 void Highlighter::highlightBlock(const QString& text) {
-    foreach (const HighlightingRule& rule, highlightingRules) {
-        QRegExp expression(rule.pattern);
-        int index = expression.indexIn(text);
-        while (index >= 0) {
-            int length = expression.matchedLength();
-            setFormat(index, length, rule.format);
-            index = expression.indexIn(text, index + length);
+    for (const HighlightingRule &rule : qAsConst(highlightingRules)) {
+        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
         }
     }
 }
+

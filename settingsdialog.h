@@ -1,12 +1,12 @@
-/* settingsdialog.h
- * declares the SettingsDialog class which allows the user to modify IDE
- * settings */
+// settingsdialog.h
+// declares the SettingsDialog class which allows the user to modify IDE
+// settings */
 
 #include <QDialog>
 #include <QSettings>
 #include "ui_settings.h"
 
-/* a simple struct for storing the color schemes */
+// a simple struct for storing the color schemes */
 const int NUM_SCHEMES = 12;
 struct ColorScheme {
     const char* name;

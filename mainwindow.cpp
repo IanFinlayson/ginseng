@@ -2,7 +2,6 @@
  * code for the main application window, actions, etc. */
 
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMdiArea>
@@ -116,8 +115,8 @@ void MainWindow::setupShortcuts() {
 
     ui->actionDocumentation->setShortcuts(QKeySequence::HelpContents);
 
-    ui->actionRun->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
-    ui->actionDebug->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R));
+    ui->actionRun->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
+    ui->actionDebug->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_R));
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
@@ -390,7 +389,7 @@ void MainWindow::on_actionFind_triggered() {
 
 /* help and about functions */
 void MainWindow::on_actionAbout_Ginseng_triggered() {
-    QDialog* about = new QDialog(0, 0);
+    QDialog* about = new QDialog();
     Ui_About about_ui;
     about_ui.setupUi(about);
     about->show();

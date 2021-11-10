@@ -1,6 +1,6 @@
-/* replacedialog.h
- * declares the ReplaceDialog class which allows for search and replace
- * functionality */
+// replacedialog.h
+// declares the ReplaceDialog class which allows for search and replace
+// functionality */
 
 #ifndef REPLACE_DIALOG
 #define REPLACE_DIALOG

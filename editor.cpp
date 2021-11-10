@@ -1,6 +1,6 @@
-/* editor.cpp
- * A text editor component that is designed specifically for Tetra code
- * */
+// editor.cpp
+// A text editor component that is designed specifically for Tetra code
+// */
 
 #include <QtWidgets>
 
@@ -32,19 +32,19 @@ Editor::Editor(QWidget* parent)
     connect(this, SIGNAL(redoAvailable(bool)), this, SLOT(setRedoAvailable(bool)));
     connect(this, SIGNAL(undoAvailable(bool)), this, SLOT(setUndoAvailable(bool)));
 
-    /* remove search and error highlights when text is changed */
+    // remove search and error highlights when text is changed */
     connect(this, SIGNAL(textChanged()), SLOT(unhighlightLine()));
 }
 
 void Editor::updateSettings() {
-    /* if line numbers are on */
+    // if line numbers are on */
     if (SettingsManager::lineNo()) {
-        /* create if needed */
+        // create if needed */
         if (!lineNumberArea) {
             lineNumberArea = new LineNumberArea(this);
         }
 
-        /* set them up */
+        // set them up */
         lineNumberArea->show();
         lineNumberArea->setFont(SettingsManager::font());
         updateLineNumberAreaWidth(0);
@@ -54,7 +54,7 @@ void Editor::updateSettings() {
                                       "color: " +
                                       SettingsManager::foreground().name() + ";");
     } else {
-        /* delete them if needed */
+        // delete them if needed */
         if (lineNumberArea) {
             delete lineNumberArea;
             lineNumberArea = NULL;
@@ -62,10 +62,10 @@ void Editor::updateSettings() {
         }
     }
 
-    /* set the tab width */
+    // set the tab width */
     tabWidth = SettingsManager::tabWidth();
 
-    /* set the font and colors */
+    // set the font and colors */
     setFont(SettingsManager::font());
     setStyleSheet(
         "QPlainTextEdit {"
@@ -77,7 +77,7 @@ void Editor::updateSettings() {
         ";"
         "}");
 
-    /* update syntax highlighting */
+    // update syntax highlighting */
     delete highlighter;
     highlighter = new Highlighter(document());
 }
@@ -124,8 +124,8 @@ bool Editor::canRedo() {
     return redoAvailable;
 }
 
-/* save as - ask the user for a file name, save the file, and return
- * success/failure */
+// save as - ask the user for a file name, save the file, and return
+// success/failure */
 bool Editor::saveas() {
     fileName =
         QFileDialog::getSaveFileName(this, tr("Save File"), "", "Tetra (*.ttr)");
@@ -136,8 +136,8 @@ bool Editor::saveas() {
     }
 }
 
-/* save - if we have a name, update it, else ask the user and then save, return
- * success/failure */
+// save - if we have a name, update it, else ask the user and then save, return
+// success/failure */
 bool Editor::save() {
     if (fileName == "") {
         return saveas();
@@ -156,33 +156,33 @@ bool Editor::save() {
     }
 }
 
-/* infer the tab width of this file */
+// infer the tab width of this file */
 void Editor::inferTabWidth(QString fileText) {
-    /* loop through all of the lines */
+    // loop through all of the lines */
     QStringList lines = fileText.split('\n');
     for (int i = 0; i < lines.size(); i++) {
         QString line = lines.at(i);
 
-        /* if this line starts with a space */
+        // if this line starts with a space */
         if (line.length() >= 1 && line.at(0) == ' ') {
-            /* count them */
+            // count them */
             int spaces = 1;
 
             while (spaces < line.size() && line.at(spaces) == ' ') {
                 spaces++;
             }
 
-            /* set it and return, we are done */
+            // set it and return, we are done */
             setTabWidth(spaces);
             return;
         }
     }
 
-    /* if NO lines started with a space, then leave default */
+    // if NO lines started with a space, then leave default */
     setTabWidth(SettingsManager::tabWidth());
 }
 
-/* open a file and return success or failure */
+// open a file and return success or failure */
 bool Editor::open(QString fname) {
     if (fname.isEmpty()) {
         return false;
@@ -196,7 +196,7 @@ bool Editor::open(QString fname) {
         ttrFile.close();
         setPlainText(fileText);
 
-        /* infer the tab width in this file */
+        // infer the tab width in this file */
         inferTabWidth(fileText);
 
         return true;
@@ -205,7 +205,7 @@ bool Editor::open(QString fname) {
     return false;
 }
 
-/* return whether the editor is empty and not unsaved */
+// return whether the editor is empty and not unsaved */
 bool Editor::isEmpty() {
     if (document()->isModified() || !document()->isEmpty()) {
         return false;
@@ -214,14 +214,14 @@ bool Editor::isEmpty() {
     }
 }
 
-/* return the open file name (will be "" if none set) */
+// return the open file name (will be "" if none set) */
 QString Editor::getOpenFile() {
     return fileName;
 }
 
-/* overrides default navigation for smart editing */
+// overrides default navigation for smart editing */
 void Editor::keyPressEvent(QKeyEvent* e) {
-    /* if we're not doing smart editing, just pass it up */
+    // if we're not doing smart editing, just pass it up */
     if (!SettingsManager::smartEdit()) {
         QPlainTextEdit::keyPressEvent(e);
         return;
@@ -229,7 +229,7 @@ void Editor::keyPressEvent(QKeyEvent* e) {
 
     cursor = this->textCursor();
 
-    /* replaces tab key with predetermined amount of spaces */
+    // replaces tab key with predetermined amount of spaces */
     if (e->key() == Qt::Key_Tab) {
         int pos = cursor.positionInBlock();
         if ((pos + tabWidth) % tabWidth == 0 || getLeadingSpaces() < pos) {
@@ -248,7 +248,7 @@ void Editor::keyPressEvent(QKeyEvent* e) {
             }
         }
 
-        /* when enter key is pressed, auto indents new line */
+        // when enter key is pressed, auto indents new line */
     } else if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
         int leadingSpaces = getLeadingSpaces();
         if (cursor.block().text().endsWith(":")) {
@@ -262,7 +262,7 @@ void Editor::keyPressEvent(QKeyEvent* e) {
         }
     }
 
-    /* smart backspace */
+    // smart backspace */
     else if (e->key() == Qt::Key_Backspace || e->key() == Qt::Key_Delete) {
         if (isTab("left")) {
             int pos = cursor.positionInBlock();
@@ -277,7 +277,7 @@ void Editor::keyPressEvent(QKeyEvent* e) {
         }
     }
 
-    /* smart navigate */
+    // smart navigate */
     else if (e->key() == Qt::Key_Left) {
         if (isTab("left")) {
             int pos = cursor.positionInBlock();
@@ -300,13 +300,13 @@ void Editor::keyPressEvent(QKeyEvent* e) {
         }
     }
 
-    /* else, just pass it */
+    // else, just pass it */
     else {
         QPlainTextEdit::keyPressEvent(e);
     }
 }
 
-/* return the number of leading spaces on the line with the cursor */
+// return the number of leading spaces on the line with the cursor */
 int Editor::getLeadingSpaces() {
     cursor = this->textCursor();
     QString line = cursor.block().text();
@@ -335,7 +335,7 @@ bool Editor::isTab(QString direction) {
     return isTab;
 }
 
-/* update the cursor coordinates */
+// update the cursor coordinates */
 void Editor::updateCursorCoordinates() {
     cursor = this->textCursor();
     QString x = QString::number(cursor.blockNumber() + 1);
@@ -343,7 +343,7 @@ void Editor::updateCursorCoordinates() {
     coordinates = x + ", " + y;
 }
 
-/* return the coordinates of the cursor */
+// return the coordinates of the cursor */
 QString Editor::getCoordinates() {
     return coordinates;
 }
@@ -356,7 +356,7 @@ int Editor::lineNumberAreaWidth() {
         ++digits;
     }
 
-    int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
+    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
 
     return space;
 }
@@ -393,7 +393,7 @@ void Editor::resizeEvent(QResizeEvent* e) {
     }
 }
 
-/* draw the line number area on the left */
+// draw the line number area on the left */
 void Editor::lineNumberAreaPaintEvent(QPaintEvent* event) {
     if (!lineNumberArea) {
         return;
@@ -435,7 +435,7 @@ void Editor::moveCursor(int line, int col) {
     setTextCursor(cursor);
 }
 
-/* highlight the current line red for an error message */
+// highlight the current line red for an error message */
 void Editor::errorHighlight() {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
@@ -451,13 +451,13 @@ void Editor::errorHighlight() {
     setExtraSelections(extraSelections);
 }
 
-/* remove all line highlighting */
+// remove all line highlighting */
 void Editor::unhighlightLine() {
     QList<QTextEdit::ExtraSelection> extraSelections;
     setExtraSelections(extraSelections);
 }
 
-/* get and set the tab width for this file */
+// get and set the tab width for this file */
 void Editor::setTabWidth(int tabWidth) {
     this->tabWidth = tabWidth;
 }
@@ -465,28 +465,28 @@ int Editor::getTabWidth() {
     return this->tabWidth;
 }
 
-/* highlight a search term */
+// highlight a search term */
 void Editor::highlightAll(QString term, bool matchCase) {
     Qt::CaseSensitivity cs = matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
-    /* clear any existing ones */
+    // clear any existing ones */
     unhighlightLine();
 
-    /* the list of selected highlighted words */
+    // the list of selected highlighted words */
     QList<QTextEdit::ExtraSelection> extraSelections;
 
-    /* for each line */
+    // for each line */
     QStringList lines = toPlainText().split('\n');
     for (int i = 0; i < lines.size(); i++) {
         QString line = lines.at(i);
 
-        /* keep track of last match if any to highlight all */
+        // keep track of last match if any to highlight all */
         int last = -1;
 
-        /* if this line matches */
+        // if this line matches */
         int col = line.indexOf(term, 0, cs);
         while (col > last) {
-            /* add a highlight for it */
+            // add a highlight for it */
             moveCursor(i + 1, col);
 
             QTextEdit::ExtraSelection currentWord;
@@ -498,16 +498,16 @@ void Editor::highlightAll(QString term, bool matchCase) {
             currentWord.cursor = cursor;
             extraSelections.append(currentWord);
 
-            /* find next instance, if any */
+            // find next instance, if any */
             col = line.indexOf(term, col + 1, cs);
         }
     }
 
-    /* add all of these */
+    // add all of these */
     setExtraSelections(extraSelections);
 }
 
-/* perform a search with jumps and highlights */
+// perform a search with jumps and highlights */
 bool Editor::searchDir(QString term,
                        bool forward,
                        bool matchCase,
@@ -516,15 +516,15 @@ bool Editor::searchDir(QString term,
 
     bool found = false;
 
-    /* remember cursor (highlight ruins it) */
+    // remember cursor (highlight ruins it) */
     QTextCursor c = textCursor();
 
-    /* do the highlighting of search terms */
+    // do the highlighting of search terms */
     if (highlight) {
         highlightAll(term, matchCase);
     }
 
-    /* try to search forwards */
+    // try to search forwards */
     QString text = toPlainText();
     int pos;
 
@@ -535,11 +535,11 @@ bool Editor::searchDir(QString term,
     }
 
     if (pos != -1) {
-        /* move to this position */
+        // move to this position */
         c.setPosition(pos, QTextCursor::MoveAnchor);
         found = true;
     } else {
-        /* wrap around */
+        // wrap around */
         int pos;
         if (forward) {
             pos = text.indexOf(term, 0, cs);
@@ -547,41 +547,41 @@ bool Editor::searchDir(QString term,
             pos = text.lastIndexOf(term, -1, cs);
         }
         if (pos != -1) {
-            /* move to this position */
+            // move to this position */
             c.setPosition(pos, QTextCursor::MoveAnchor);
             found = true;
         }
     }
 
-    /* reset it at new place */
+    // reset it at new place */
     setTextCursor(c);
     return found;
 }
 
 void Editor::replaceNext(QString before, QString after, bool matchCase) {
-    /* search forward first */
+    // search forward first */
     if (!searchDir(before, true, matchCase, false)) {
         return;
     }
 
-    /* select the text given */
+    // select the text given */
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor,
                         before.size());
     cursor.insertText(after);
 }
 
-/* replace all text in the document */
+// replace all text in the document */
 void Editor::replaceAll(QString before, QString after, bool matchCase) {
-    /* get the text */
+    // get the text */
     QString text = toPlainText();
 
-    /* do the actual replacement */
+    // do the actual replacement */
     text.replace(before, after,
                  matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
 
-    /* set the text back
-     * this is done using the cursor so as not to erase all history! */
+    // set the text back
+    // this is done using the cursor so as not to erase all history! */
     QTextCursor cursor(document());
     cursor.select(QTextCursor::Document);
     cursor.insertText(text);
