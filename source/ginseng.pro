@@ -18,7 +18,7 @@ CONFIG += qt debug thread
 QT += core gui widgets printsupport
 
 # build an application
-TARGET = ginseng
+TARGET = ../ginseng
 TEMPLATE = app
 
 # specify all the files we need
