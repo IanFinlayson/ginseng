@@ -1,5 +1,5 @@
-/* replacedialog.cpp
- * code for the replace dialog */
+// replacedialog.cpp
+// code for the replace dialog
 
 #include <QDebug>
 
@@ -10,23 +10,23 @@
 
 ReplaceDialog::ReplaceDialog(QWidget* parent)
     : QDialog(parent) {
-    /* setup the GUI */
+    // setup the GUI
     ui = new Ui::Replace;
     ui->setupUi(this);
 
-    /* save the main window */
+    // save the main window
     mainWindow = (MainWindow*)parent;
 
-    /* connect up the buttons */
+    // connect up the buttons
     connect(ui->cancel, SIGNAL(released()), this, SLOT(cancel()));
     connect(ui->next, SIGNAL(released()), this, SLOT(next()));
     connect(ui->repl, SIGNAL(released()), this, SLOT(replace()));
     connect(ui->replaceAll, SIGNAL(released()), this, SLOT(replaceAll()));
 
-    /* make the replace all button default */
+    // make the replace all button default
     ui->replaceAll->setDefault(true);
 
-    /* set the initial checked ness from settings */
+    // set the initial checked ness from settings
     ui->matchCase->setCheckState(SettingsManager::matchCase() ? Qt::Checked
                                                               : Qt::Unchecked);
     connect(ui->matchCase, SIGNAL(stateChanged(int)), this,
@@ -34,22 +34,22 @@ ReplaceDialog::ReplaceDialog(QWidget* parent)
 }
 
 void ReplaceDialog::updateSettings() {
-    /* set the checked ness of this based on settings */
+    // set the checked ness of this based on settings
     ui->matchCase->setCheckState(SettingsManager::matchCase() ? Qt::Checked
                                                               : Qt::Unchecked);
 }
 
 void ReplaceDialog::saveMatchCase(int) {
-    /* save checked ness into settings */
+    // save checked ness into settings
     SettingsManager::setMatchCase(ui->matchCase->checkState() == Qt::Checked);
 }
 
-/* close the dialog */
+// close the dialog
 void ReplaceDialog::cancel() {
     close();
 }
 
-/* replace the next instance */
+// replace the next instance
 void ReplaceDialog::replace() {
     if (ui->find->text().size() > 0) {
         mainWindow->currentEditor()->replaceNext(
@@ -58,7 +58,7 @@ void ReplaceDialog::replace() {
     }
 }
 
-/* replace all instances */
+// replace all instances
 void ReplaceDialog::replaceAll() {
     if (ui->find->text().size() > 0) {
         mainWindow->currentEditor()->replaceAll(
@@ -67,7 +67,7 @@ void ReplaceDialog::replaceAll() {
     }
 }
 
-/* called when it's time to do a search */
+// called when it's time to do a search
 void ReplaceDialog::next() {
     if (ui->find->text().size() > 0) {
         mainWindow->currentEditor()->searchDir(

@@ -1,5 +1,5 @@
-/* settingsdialog.cpp
- * code for the settings dialog */
+// settingsdialog.cpp
+// code for the settings dialog
 
 #include <stdio.h>
 #include <QColorDialog>
@@ -8,11 +8,11 @@
 #include "settingsdialog.h"
 #include "settingsmanager.h"
 
-/* they are a literal table given right here */
+// they are a literal table given right here
 ColorScheme schemes[NUM_SCHEMES] = {
-    /* name             fore      back      keys      types     vals
-       comment   funcs     termfg    termbg    linefg    linebg    search
-       error */
+    // name             fore      back      keys      types     vals
+    // comment   funcs     termfg    termbg    linefg    linebg    search
+    // error
     {"Default", 0x000000, 0xf5f5f5, 0x004088, 0xb28c10, 0xaa0000, 0x1a5d11,
      0x73378c, 0xeeeeee, 0x424242, 0x404040, 0xe8e8e8, 0xffff7f, 0xee6666},
     {"Penumbra", 0x000000, 0xffffff, 0x7f0055, 0x7f0055, 0x0000c0, 0x3f7f5f,
@@ -44,7 +44,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     : QDialog(parent) {
     setupUi(this);
 
-    /* set values to the default ones */
+    // set values to the default ones
     tabWidth->setValue(SettingsManager::tabWidth());
     lineNo->setCheckState(SettingsManager::lineNo() ? Qt::Checked
                                                     : Qt::Unchecked);
@@ -53,11 +53,11 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     fontButton->setText(SettingsManager::font().family() + " | " +
                         QString::number(SettingsManager::font().pointSize()));
 
-    /* set up the font button */
+    // set up the font button
     connect(fontButton, SIGNAL(released()), this, SLOT(askFont()));
     font_choice = SettingsManager::font();
 
-    /* set up the color buttons so the color matches the current choice */
+    // set up the color buttons so the color matches the current choice
     foreground->setStyleSheet("background-color: " + SettingsManager::foreground().name());
     background->setStyleSheet("background-color: " + SettingsManager::background().name());
     keywords->setStyleSheet("background-color: " + SettingsManager::keywords().name());
@@ -72,7 +72,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     search->setStyleSheet("background-color: " + SettingsManager::search().name());
     error->setStyleSheet("background-color: " + SettingsManager::error().name());
 
-    /* connect them to the color dialog action */
+    // connect them to the color dialog action
     connect(foreground, SIGNAL(released()), this, SLOT(askColor()));
     connect(background, SIGNAL(released()), this, SLOT(askColor()));
     connect(keywords, SIGNAL(released()), this, SLOT(askColor()));
@@ -87,7 +87,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     connect(search, SIGNAL(released()), this, SLOT(askColor()));
     connect(error, SIGNAL(released()), this, SLOT(askColor()));
 
-    /* load the color schemes into the drop down */
+    // load the color schemes into the drop down
     schemeChooser->addItem("Choose Scheme...");
     for (int i = 0; i < NUM_SCHEMES; i++) {
         schemeChooser->addItem(schemes[i].name);
@@ -96,17 +96,17 @@ SettingsDialog::SettingsDialog(QWidget* parent)
             SLOT(selectTheme(int)));
 }
 
-/* select a theme from the color scheme list */
+// select a theme from the color scheme list
 void SettingsDialog::selectTheme(int index) {
-    /* choice 0 is invalid, it is the "Choose Scheme" one */
+    // choice 0 is invalid, it is the "Choose Scheme" one
     if (index == 0) {
         return;
     }
 
-    /* look up the scheme from the array */
+    // look up the scheme from the array
     ColorScheme* cs = &schemes[index - 1];
 
-    /* apply it */
+    // apply it
     foreground->setPalette(QColor(cs->foreground));
     background->setPalette(QColor(cs->background));
     keywords->setPalette(QColor(cs->keywords));
@@ -134,11 +134,11 @@ void SettingsDialog::askColor() {
 }
 
 void SettingsDialog::askFont() {
-    /* ask the user what font they want */
+    // ask the user what font they want
     bool ok;
     QFont font = QFontDialog::getFont(&ok, SettingsManager::font(), this);
 
-    /* if they clicked OK, set it */
+    // if they clicked OK, set it
     if (ok) {
         fontButton->setText(font.family() + " | " +
                             QString::number(font.pointSize()));
@@ -183,7 +183,7 @@ void SettingsDialog::on_buttonBox_clicked(QAbstractButton* button) {
         accept();
 
     } else if (button == buttonBox->button(QDialogButtonBox::Cancel)) {
-        /* do not save any settings and reject */
+        // do not save any settings and reject
         reject();
     }
 }

@@ -1,5 +1,5 @@
-/* mainwindow.cpp
- * code for the main application window, actions, etc. */
+// mainwindow.cpp
+// code for the main application window, actions, etc.
 
 #include <QDesktopServices>
 #include <QFileDialog>
@@ -27,57 +27,57 @@
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), replaceDialog(this) {
-    /* set the menu bar to work natively for systems with global bars */
+    // set the menu bar to work natively for systems with global bars
     menuBar()->setNativeMenuBar(true);
 
-    /* set up the ui elements for the window */
+    // set up the ui elements for the window
     ui->setupUi(this);
 
-    /* set the title and icon */
+    // set the title and icon
     setWindowTitle(tr("Ginseng [*]"));
     setWindowIcon(QIcon(":/icons/resources/icons/logo.svg"));
 
-    /* set up the key shortcuts for the program */
+    // set up the key shortcuts for the program
     setupShortcuts();
 
-    /* set up the thread and file runner for running programs */
+    // set up the thread and file runner for running programs
     progThread = NULL;
     fileRunner = NULL;
 
-    /* set up the status bar */
+    // set up the status bar
     statusBar()->showMessage("Ready.");
     coords = new QLabel("");
     statusBar()->addPermanentWidget(coords);
     updateCoordinates();
 
-    /* set the tab bar in "document mode" and give the tab no name */
+    // set the tab bar in "document mode" and give the tab no name
     ui->tabBar->setDocumentMode(true);
     ui->tabBar->setTabText(0, "Unsaved");
 
-    /* set these as disabled (they are enabled dynamically) */
+    // set these as disabled (they are enabled dynamically)
     ui->actionCut->setEnabled(false);
     ui->actionCopy->setEnabled(false);
     ui->actionRedo->setEnabled(false);
     ui->actionUndo->setEnabled(false);
     ui->actionStop->setVisible(false);
 
-    /* set up connections of signals with the current editor */
+    // set up connections of signals with the current editor
     currentEditor()->setUpConnections(this);
 
-    /* connect tab changes so we can update buttons */
+    // connect tab changes so we can update buttons
     connect(ui->tabBar, SIGNAL(currentChanged(int)), this,
             SLOT(onTabChange(int)));
 
-    /* set up connections with the console */
+    // set up connections with the console
     ui->console->setUpConnections(this);
 
-    /* hide the search area by default */
+    // hide the search area by default
     hideSearch();
 
-    /* hide the console by default */
+    // hide the console by default
     ui->dock->hide();
 
-    /* set up the search box signals */
+    // set up the search box signals
     connect(ui->findClose, SIGNAL(pressed()), this, SLOT(hideSearch()));
     connect(ui->findNext, SIGNAL(pressed()), this, SLOT(searchNext()));
     connect(ui->findPrev, SIGNAL(pressed()), this, SLOT(searchPrev()));
@@ -88,7 +88,7 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->matchCase, SIGNAL(stateChanged(int)), this,
             SLOT(saveMatchCase(int)));
 
-    /* TODO enable debugging when it is working */
+    // TODO enable debugging when it is working
     ui->actionDebug->setVisible(false);
 }
 
@@ -128,13 +128,13 @@ QString MainWindow::getOpenFile() {
     return currentEditor()->getOpenFile();
 }
 
-/* gives stripped name of file (removes file path) */
+// gives stripped name of file (removes file path)
 QString MainWindow::strippedName(const QString& fullFileName) {
     return QFileInfo(fullFileName).fileName();
 }
 
 void MainWindow::onTabChange(int) {
-    /* update button states */
+    // update button states
     if (currentEditor()) {
         ui->actionCopy->setEnabled(currentEditor()->canCopy());
         ui->actionCut->setEnabled(currentEditor()->canCopy());
@@ -143,12 +143,12 @@ void MainWindow::onTabChange(int) {
     }
 }
 
-/* load an initial file e.g. as an open file */
+// load an initial file e.g. as an open file
 void MainWindow::doOpen(QString fname) {
     Editor* newEditor = new Editor;
     newEditor->setUpConnections(this);
     if (newEditor->open(fname)) {
-        /* if there is one tab which is empty and not modified, close it first */
+        // if there is one tab which is empty and not modified, close it first
         if (ui->tabBar->count() == 1 && currentEditor()->isEmpty()) {
             currentEditor()->close();
             ui->tabBar->removeTab(ui->tabBar->currentIndex());
@@ -200,25 +200,25 @@ void MainWindow::on_actionClose_triggered() {
         messageBox.setDefaultButton(QMessageBox::Save);
         switch (messageBox.exec()) {
             case QMessageBox::Save:
-                /* try to save, if something goes wrong, bail */
+                // try to save, if something goes wrong, bail
                 if (!currentEditor()->save()) {
                     return;
                 }
                 break;
             case QMessageBox::Discard:
-                /* don't save! */
+                // don't save!
                 break;
             case QMessageBox::Cancel:
-                /* bail! */
+                // bail!
                 return;
         }
     }
 
-    /* actually close the editor and tab */
+    // actually close the editor and tab
     currentEditor()->close();
     ui->tabBar->removeTab(ui->tabBar->currentIndex());
 
-    /* if that was the last tab, time to leave */
+    // if that was the last tab, time to leave
     if (ui->tabBar->count() == 0) {
         QApplication::quit();
     } else {
@@ -304,12 +304,12 @@ void MainWindow::on_actionUndo_triggered() {
     currentEditor()->undo();
 }
 void MainWindow::on_actionQuit_triggered() {
-    /* if there is one tab only, do a close */
+    // if there is one tab only, do a close
     if (ui->tabBar->count() == 1) {
         on_actionClose_triggered();
     }
 
-    /* check if there are unsaved tabs */
+    // check if there are unsaved tabs
     int mod_count = 0;
     Editor* unsaved = NULL;
     for (int i = 0; i < ui->tabBar->count(); i++) {
@@ -331,16 +331,16 @@ void MainWindow::on_actionQuit_triggered() {
         messageBox.setDefaultButton(QMessageBox::Save);
         switch (messageBox.exec()) {
             case QMessageBox::Save:
-                /* try to save, if something goes wrong, bail */
+                // try to save, if something goes wrong, bail
                 if (!unsaved->save()) {
                     return;
                 }
                 break;
             case QMessageBox::Discard:
-                /* don't save! */
+                // don't save!
                 break;
             case QMessageBox::Cancel:
-                /* bail! */
+                // bail!
                 return;
         }
     } else if (mod_count > 1) {
@@ -362,10 +362,10 @@ void MainWindow::on_actionQuit_triggered() {
                     break;
                 }
             case QMessageBox::Discard:
-                /* don't save! */
+                // don't save!
                 break;
             case QMessageBox::Cancel:
-                /* bail! */
+                // bail!
                 return;
         }
     }
@@ -387,7 +387,7 @@ void MainWindow::on_actionFind_triggered() {
     showSearch();
 }
 
-/* help and about functions */
+// help and about functions
 void MainWindow::on_actionAbout_Ginseng_triggered() {
     QDialog* about = new QDialog();
     Ui_About about_ui;
@@ -399,13 +399,13 @@ void MainWindow::on_actionSettings_triggered() {
     SettingsDialog* prefs = new SettingsDialog(this);
     prefs->exec();
 
-    /* update the settings of all open editors */
+    // update the settings of all open editors
     for (int i = 0; i < ui->tabBar->count(); i++) {
         Editor* ed = (Editor*)ui->tabBar->widget(i);
         ed->updateSettings();
     }
 
-    /* update the settings for the console */
+    // update the settings for the console
     ui->console->updateSettings();
 }
 
@@ -418,21 +418,21 @@ void MainWindow::receiveOutput(QString text) {
 }
 
 void MainWindow::on_actionRun_triggered() {
-    /* if it's not saved, we can't run */
+    // if it's not saved, we can't run
     if (currentEditor()->save()) {
         updateTitle();
     } else {
         return;
     }
 
-    /* start a thread */
+    // start a thread
     progThread = new QThread;
     fileRunner = new FileRunner(this);
 
-    /* set up running so we know when we are done */
+    // set up running so we know when we are done
     connect(fileRunner, SIGNAL(finished()), this, SLOT(exitRunMode()));
 
-    /* make sure the bottom dock is shown */
+    // make sure the bottom dock is shown
     ui->dock->show();
     ui->console->document()->setPlainText("");
     ui->console->setEnabled(true);
@@ -440,26 +440,26 @@ void MainWindow::on_actionRun_triggered() {
     ui->console->setReadOnly(false);
     ui->console->clear();
 
-    /* disable run again */
+    // disable run again
     ui->actionRun->setDisabled(true);
     ui->actionDebug->setDisabled(true);
     ui->actionStop->setVisible(true);
     statusBar()->showMessage("Running.");
 
-    /* start the worker thread which runs the programs */
+    // start the worker thread which runs the programs
     fileRunner->moveToThread(progThread);
     progThread->start();
     QMetaObject::invokeMethod(fileRunner, "runFile", Qt::QueuedConnection,
                               Q_ARG(bool, false));
 }
 
-/* when the console has input for us to pass to program */
+// when the console has input for us to pass to program
 void MainWindow::receiveInput(QString text) {
-    /* just pass it to the file runner */
+    // just pass it to the file runner
     fileRunner->receiveInput(text);
 }
 
-/* called when the program has some type of error */
+// called when the program has some type of error
 void MainWindow::reportError(QString mesg, int line) {
     QString full = "Error on line " + QString::number(line) + ": " + mesg;
     ui->console->write(full);
@@ -468,15 +468,15 @@ void MainWindow::reportError(QString mesg, int line) {
     currentEditor()->errorHighlight();
 }
 
-/* finish running this */
+// finish running this
 void MainWindow::exitRunMode() {
-    /* get rid of the running thread */
+    // get rid of the running thread
     delete progThread;
     delete fileRunner;
     progThread = NULL;
     fileRunner = NULL;
 
-    /* go back to editing mode */
+    // go back to editing mode
     ui->actionRun->setEnabled(true);
     ui->actionDebug->setEnabled(true);
     ui->actionStop->setVisible(false);
@@ -485,11 +485,11 @@ void MainWindow::exitRunMode() {
 }
 
 void MainWindow::on_actionStop_triggered() {
-    /* tell the running thread to stop whatever it's doing */
+    // tell the running thread to stop whatever it's doing
     fileRunner->halt();
 }
 
-/* show and hide all components of the search window */
+// show and hide all components of the search window
 void MainWindow::hideSearch() {
     ui->matchCase->setVisible(false);
     ui->findClose->setVisible(false);
@@ -500,7 +500,7 @@ void MainWindow::hideSearch() {
     ui->searchBox->setStyleSheet("");
 }
 void MainWindow::showSearch() {
-    /* set the checked ness of this based on settings */
+    // set the checked ness of this based on settings
     ui->matchCase->setCheckState(SettingsManager::matchCase() ? Qt::Checked
                                                               : Qt::Unchecked);
 
@@ -515,18 +515,18 @@ void MainWindow::showSearch() {
 }
 
 void MainWindow::saveMatchCase(int) {
-    /* save checked ness into settings */
+    // save checked ness into settings
     SettingsManager::setMatchCase(ui->matchCase->checkState() == Qt::Checked);
 }
 
-/* actually execute the searches */
+// actually execute the searches
 void MainWindow::doSearch(bool next) {
-    /* only search for non empty strings */
+    // only search for non empty strings
     if (ui->searchBox->text().size() == 0) {
         return;
     }
 
-    /* search and check if found */
+    // search and check if found
     if (currentEditor()->searchDir(ui->searchBox->text(), next,
                                    ui->matchCase->checkState() == Qt::Checked,
                                    true)) {
@@ -545,18 +545,18 @@ void MainWindow::searchPrev() {
     doSearch(false);
 }
 
-/* called also when the text is changed */
+// called also when the text is changed
 void MainWindow::clearSearchColor(QString) {
     ui->searchBox->setStyleSheet("");
 }
 
-/* launch the replace dialog */
+// launch the replace dialog
 void MainWindow::on_actionReplace_triggered() {
     replaceDialog.updateSettings();
     replaceDialog.show();
 }
 
-/* TODO debugger functions */
+// TODO debugger functions
 void MainWindow::on_actionDebug_triggered() {
 }
 

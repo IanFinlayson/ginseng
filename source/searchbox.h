@@ -1,5 +1,5 @@
 // searchbox.h
-// custom line edit which only exists to make escape close the box */
+// custom line edit which only exists to make escape close the box
 
 #ifndef SEARCHBOX_H
 #define SEARCHBOX_H

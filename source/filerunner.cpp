@@ -1,5 +1,5 @@
-/* filerunner.cpp
- * code to run or debug a program */
+// filerunner.cpp
+// code to run or debug a program
 
 #include <iostream>
 
@@ -12,30 +12,30 @@
 #include "console.h"
 #include "filerunner.h"
 
-/* create the FileRunner and save the window it's associated with */
+// create the FileRunner and save the window it's associated with
 FileRunner::FileRunner(MainWindow* mainWindow) {
-    /* output */
+    // output
     connect(this, SIGNAL(output(QString)), mainWindow,
             SLOT(receiveOutput(QString)));
 
-    /* errors */
+    // errors
     connect(this, SIGNAL(errorSeen(QString, int)), mainWindow,
             SLOT(reportError(QString, int)));
 
-    /* save main window ref */
+    // save main window ref
     this->mainWindow = mainWindow;
     interrupted = false;
 }
 
-/* run or debug file */
+// run or debug file
 void FileRunner::runFile(bool debug) {
-    /* start timer */
+    // start timer
     programTimer.start();
 
-    /* get the current file name */
+    // get the current file name
     QFileInfo file(mainWindow->getOpenFile());
 
-    /* launch javac to compile */
+    // launch javac to compile
     QString command = "/usr/bin/javac ";
     command += file.fileName();
     proc = new QProcess(this);
@@ -43,12 +43,12 @@ void FileRunner::runFile(bool debug) {
     proc->start(command);
     proc->waitForFinished(-1);
     
-    /* list any compiler errors */
+    // list any compiler errors
     QByteArray err = proc->readAllStandardError();
     emit output(QString::fromStdString(err.toStdString()));
     QThread::currentThread()->quit();
 
-    /* if there were any errors, we're done */
+    // if there were any errors, we're done
     if (proc->exitCode() != QProcess::NormalExit) {
         delete proc;
         proc = NULL;
@@ -59,7 +59,7 @@ void FileRunner::runFile(bool debug) {
         proc = NULL;
     }
 
-    /* now we launch java to run */
+    // now we launch java to run
     command = "/usr/bin/java ";
     command += file.baseName();
 
@@ -68,7 +68,7 @@ void FileRunner::runFile(bool debug) {
     proc->start(command);
     proc->waitForStarted();
 
-    /* keep going until the process is done */
+    // keep going until the process is done
     while (proc->state() == QProcess::Running) {
         input_mux.lock();
         if (input_available) {
@@ -84,16 +84,16 @@ void FileRunner::runFile(bool debug) {
         }
     }
 
-    /* wait for it to finish the rest of the way */
+    // wait for it to finish the rest of the way
     proc->waitForFinished(-1);
 
-    /* now we are done */
+    // now we are done
     QThread::currentThread()->quit();
     delete proc;
     proc = NULL;
 
     if (!interrupted) {
-        /* calculate elapsed running time */
+        // calculate elapsed running time
         double seconds = programTimer.elapsed() / 1000.0;
         emit output("Program finished in " + QString::number(seconds, 'f', 2) + " seconds.");
     }
@@ -107,7 +107,7 @@ void FileRunner::receiveInput(QString in) {
     input_mux.unlock();
 }
 
-/* stop the running program in its tracks */
+// stop the running program in its tracks
 void FileRunner::halt() {
     interrupted = true;
     proc->terminate();

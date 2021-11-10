@@ -1,5 +1,5 @@
 // filerunner.h
-// code to run or debug a program */
+// code to run or debug a program
 
 #ifndef FILERUNNER_H
 #define FILERUNNER_H
@@ -19,10 +19,10 @@ class FileRunner : public QObject {
   public:
     FileRunner(MainWindow* mainWindow);
 
-    // halt the running program in its tracks */
+    // halt the running program in its tracks
     void halt();
 
-    // get input from console */
+    // get input from console
     void receiveInput(QString input);
 
   signals:
@@ -35,18 +35,18 @@ class FileRunner : public QObject {
     void runFile(bool debug);
 
   private:
-    // pointer to the main window */
+    // pointer to the main window
     MainWindow* mainWindow;
 
-    // pointer to a process for compilation/execution */
+    // pointer to a process for compilation/execution
     QProcess* proc;
 
-    // the string when there is one */
+    // the string when there is one
     QMutex input_mux;
     QString input;
     bool input_available;
 
-    // keep track of the elapsed running time */
+    // keep track of the elapsed running time
     QElapsedTimer programTimer;
     bool interrupted;
 };

@@ -1,15 +1,15 @@
-/* syntaxhighlighter.cpp
- * implements syntax highlighting of Java code */
+// syntaxhighlighter.cpp
+// implements syntax highlighting of Java code
 
 #include "syntaxhighlighter.h"
 #include "settingsmanager.h"
 
-/* set up the highlighting */
+// set up the highlighting
 Highlighter::Highlighter(QTextDocument* parent)
     : QSyntaxHighlighter(parent) {
     HighlightingRule rule;
 
-    /* types */
+    // types
     typeFormat.setForeground(SettingsManager::types());
     QStringList typePatterns;
     typePatterns << "\\bbyte\\b"
@@ -29,7 +29,7 @@ Highlighter::Highlighter(QTextDocument* parent)
         highlightingRules.append(rule);
     }
 
-    /* keywords */
+    // keywords
     keywordFormat.setForeground(SettingsManager::keywords());
     QStringList keywordPatterns;
     keywordPatterns << "\\babstract\\b"
@@ -78,7 +78,7 @@ Highlighter::Highlighter(QTextDocument* parent)
         highlightingRules.append(rule);
     }
 
-    /* values */
+    // values
     valueFormat.setForeground(SettingsManager::values());
     QStringList valuePatterns;
     valuePatterns << "\\btrue\\b"
@@ -91,20 +91,20 @@ Highlighter::Highlighter(QTextDocument* parent)
         highlightingRules.append(rule);
     }
 
-    /* strings */
+    // strings
     quotationFormat.setForeground(SettingsManager::values());
     rule.pattern = QRegularExpression("\".*\"");
     rule.format = quotationFormat;
     highlightingRules.append(rule);
 
-    /* single-line comments */
+    // single-line comments
     singleLineCommentFormat.setForeground(SettingsManager::comments());
     rule.pattern = QRegularExpression("//[^\n]*");
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
-    /* multi-line comments 
-     * FIXME - this doesn't currently work! */
+    // multi-line comments 
+    // FIXME - this doesn't currently work!
     multiLineCommentFormat.setForeground(SettingsManager::comments());
     rule.pattern = QRegularExpression("\\/\\*(\\r|[^*]|\\n|(\\*+[^\\/]))*\\*\\/");
     rule.format = multiLineCommentFormat;

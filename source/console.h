@@ -1,5 +1,5 @@
 // console.h
-// a custom console widget for running code */
+// a custom console widget for running code
 
 #ifndef CONSOLE_H
 #define CONSOLE_H
@@ -20,16 +20,16 @@ class Console : public QPlainTextEdit {
   public:
     Console(MainWindow* mainWindow = NULL);
 
-    // sets the link to the parent window and connections between them */
+    // sets the link to the parent window and connections between them
     void setUpConnections(MainWindow* parent);
 
-    // update the settings */
+    // update the settings
     void updateSettings();
 
-    // for I/O */
+    // for I/O
     void write(QString text);
 
-    // should be called for each new program run */
+    // should be called for each new program run
     void clear();
 
   signals:
@@ -43,7 +43,7 @@ class Console : public QPlainTextEdit {
   private:
     MainWindow* parent;
 
-    // the position of the cursor at the start of the input */
+    // the position of the cursor at the start of the input
     int inputStart;
 };
 #endif

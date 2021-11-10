@@ -1,5 +1,5 @@
-/* settingsmanager.cpp
- * code to manage saving, restoring, and querying settings */
+// settingsmanager.cpp
+// code to manage saving, restoring, and querying settings
 
 #include "settingsmanager.h"
 #include <QtWidgets>
@@ -7,7 +7,7 @@
 
 QSettings* SettingsManager::settingsManager = NULL;
 
-/* external referecne to the color schemes, 0 is default */
+// external referecne to the color schemes, 0 is default
 extern ColorScheme schemes[12];
 
 void SettingsManager::init() {
@@ -31,7 +31,7 @@ bool SettingsManager::matchCase() {
 }
 
 QFont SettingsManager::font() {
-    /* start with the generic monospace font */
+    // start with the generic monospace font
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     font.setPointSize(12);
 
