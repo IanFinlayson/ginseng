@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QInputDialog>
@@ -21,26 +20,24 @@ FileRunner::FileRunner(MainWindow* mainWindow) {
     // errors
     connect(this, SIGNAL(errorSeen(QString, int)), mainWindow,
             SLOT(reportError(QString, int)));
-
+    
     // save main window ref
     this->mainWindow = mainWindow;
     interrupted = false;
 }
 
 // run or debug file
-void FileRunner::runFile(bool debug) {
+void FileRunner::runFile() {
     // start timer
     programTimer.start();
-
+    
     // get the current file name
     QFileInfo file(mainWindow->getOpenFile());
 
     // launch javac to compile
-    QString command = "/usr/bin/javac ";
-    command += file.fileName();
     proc = new QProcess(this);
     proc->setWorkingDirectory(file.path());
-    proc->start(command);
+    proc->start("/usr/bin/javac", {file.fileName()});
     proc->waitForFinished(-1);
     
     // list any compiler errors
@@ -60,14 +57,11 @@ void FileRunner::runFile(bool debug) {
     }
 
     // now we launch java to run
-    command = "/usr/bin/java ";
-    command += file.baseName();
-
     proc = new QProcess(this);
     proc->setWorkingDirectory(file.path());
-    proc->start(command);
+    proc->start("/usr/bin/java", {file.baseName()});
     proc->waitForStarted();
-
+    
     // keep going until the process is done
     while (proc->state() == QProcess::Running) {
         input_mux.lock();

@@ -32,7 +32,7 @@ class FileRunner : public QObject {
     void errorSeen(QString message, int line);
 
   public slots:
-    void runFile(bool debug);
+    void runFile();
 
   private:
     // pointer to the main window

@@ -418,6 +418,7 @@ void MainWindow::receiveOutput(QString text) {
 }
 
 void MainWindow::on_actionRun_triggered() {
+    qDebug() << "A???\n";
     // if it's not saved, we can't run
     if (currentEditor()->save()) {
         updateTitle();
@@ -449,8 +450,8 @@ void MainWindow::on_actionRun_triggered() {
     // start the worker thread which runs the programs
     fileRunner->moveToThread(progThread);
     progThread->start();
-    QMetaObject::invokeMethod(fileRunner, "runFile", Qt::QueuedConnection,
-                              Q_ARG(bool, false));
+    qDebug() << "STARTING???\n";
+    QMetaObject::invokeMethod(fileRunner, "runFile", Qt::QueuedConnection);
 }
 
 // when the console has input for us to pass to program
