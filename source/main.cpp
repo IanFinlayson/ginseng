@@ -12,19 +12,13 @@
 #include "mainwindow.h"
 #include "settingsmanager.h"
 
+#include <iostream>
+
 int main(int argc, char* argv[]) {
     // set up the application
     QApplication app(argc, argv);
     app.setOrganizationName("UMW Computer Science");
     app.setApplicationName("Ginseng");
-
-    /* for experimenting with different application styles
-    QStringList styles = QStyleFactory::keys();
-    for (int i = 0; i < styles.size(); i++) {
-        std::cout << styles.at(i).toLocal8Bit().constData() << std::endl; 
-    }
-    app.setStyle("Breeze");
-    */
 
     // initialize the settings and the main window
     SettingsManager::init();
